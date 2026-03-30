@@ -1,0 +1,11 @@
+{
+  "name": "speak",
+  "version": "0.1.0",
+  "description": "Cross-platform TTS for Claude Code. Hear your agent's responses.",
+  "author": {
+    "name": "Guillermo Weinmann"
+  },
+  "license": "Apache-2.0",
+  "repository": "https://github.com/alphabet/speak",
+  "keywords": ["tts", "text-to-speech", "accessibility", "audio", "voice"]
+}

@@ -1,0 +1,7 @@
+node_modules/
+.env
+package-lock.json
+*.log
+.ai/mcp-server/screenshots/
+.ai/tmp/
+tmp/
