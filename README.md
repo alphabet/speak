@@ -10,6 +10,17 @@ When Claude finishes a response, the Stop hook extracts the text, strips markdow
   width="auto"></video>
 
 
+## Compatibility
+
+Works with any Claude Code surface that supports hooks and plugins:
+
+- CLI (`claude`)
+- Desktop app (Mac/Windows)
+- Web app (claude.ai/code)
+- IDE extensions (VS Code, JetBrains)
+
+Does **not** work with Claude Desktop (the chat app), which has no hook or plugin system.
+
 ## Install
 
 1. Clone this repo somewhere on your machine
