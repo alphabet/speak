@@ -9,15 +9,10 @@ When Claude finishes a response, the Stop hook extracts the text, strips markdow
 ## Install
 
 1. Clone this repo somewhere on your machine
-2. Add the plugin to your `~/.claude/settings.json`:
-   ```json
-   {
-     "enabledPlugins": {
-       "speak@local": true
-     }
-   }
+2. Launch Claude Code with the plugin:
+   ```bash
+   claude --plugin-dir /path/to/speak
    ```
-3. Restart your Claude Code session
 
 If you have a TTS block in `~/.claude/hooks/scripts/hooks.py`, remove it to avoid double-firing.
 
