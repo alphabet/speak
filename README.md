@@ -6,6 +6,10 @@ Cross-platform text-to-speech plugin for Claude Code. Hear your agent's response
 
 When Claude finishes a response, the Stop hook extracts the text, strips markdown noise, and speaks it using your platform's native TTS engine.
 
+<video src="https://github.com/user-attachments/assets/504d2148-3681-427f-99be-3c48a0dafad4" controls
+  width="auto"></video>
+
+
 ## Install
 
 1. Clone this repo somewhere on your machine
