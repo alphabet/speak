@@ -22,19 +22,19 @@ If you have a TTS block in `~/.claude/hooks/scripts/hooks.py`, remove it to avoi
 
 ## Usage
 
-### /speak:say command
+### /speak
 
 ```
-/speak:say on                          Enable TTS
-/speak:say off                         Disable TTS
-/speak:say status                      Show current settings
-/speak:say config voice <name>         Set voice (e.g. "Grandma", "Karen")
-/speak:say config sentences <n>        Sentences to speak (1-10)
-/speak:say config speed <n>            Rate multiplier (0.1-3.0)
-/speak:say config clean terse          Strip markdown before speaking
-/speak:say config clean verbose        Speak raw text as-is
-/speak:say voices                      List available voices
-/speak:say help                        Show all commands
+/speak on                                Enable TTS
+/speak off                               Disable TTS
+/speak status                            Show current settings
+/speak config voice <name>               Set voice (e.g. "Grandma", "Grandpa")
+/speak config sentences <n>              Sentences to speak (1-10)
+/speak config speed <n>                  Rate multiplier (0.1-3.0)
+/speak config clean terse                Strip markdown before speaking
+/speak config clean verbose              Speak raw text as-is
+/speak voices                            List available voices
+/speak help                              Show all commands
 ```
 
 ### Quick silence
@@ -90,7 +90,7 @@ Stored at `~/.speak/config.json`. All fields optional, defaults shown:
 - The SessionStart hook warns if espeak is missing; check your session start output
 
 **Wrong voice or speed**
-- Run `/speak:say voices` to see available voices
+- Run `/speak voices` to see available voices
 - Voice names are platform-specific and must match exactly (e.g. "Grandma (English (US))", not just "Grandma")
 
 **Config looks wrong**
@@ -117,7 +117,7 @@ speak/
     stop.mjs                    Stop hook (speak on response)
     session-start.mjs           Check TTS availability
   skills/
-    say/SKILL.md                /speak:say command
+    speak/SKILL.md                /speak command
   lib/
     config.mjs                  Config load/save
     text-cleaner.mjs            Markdown stripping
