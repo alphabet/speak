@@ -22,7 +22,7 @@ It uses OS native speech. Native mainly for simplicity. Platform abstraction was
 1. Clone this repository, i.e., `gh repo clone alphabet/speak ~/speak`
 2. Start Claude Code with `claude --plugin-dir ~/speak`
 
-If you want the same voice I use, on MacOS it's `/speak set voice "Grandma (English (US))"`
+If you want the same voice I use, on MacOS it's `/speak set voice grandma` and pick English (US)
 
 ```
 Current TTS settings:
@@ -80,7 +80,7 @@ To stop speech mid-sentence, hardware mute is the only thing that works. Use you
 ## Event flow
 
 - **Stop hook** fires after each Claude response
-- Text is cleaned (markdown/code stripped) via via `/speak set terse`
+- Text is cleaned (markdown/code stripped) via `/speak terse`
 - Text is truncated to N sentences via `/speak set sentences N`
 - Native TTS engine speaks the text
 - If a previous response is still speaking, it gets cut off. Only one voice at a time.
@@ -122,7 +122,7 @@ Stored at `~/.speak/config.json`. All fields optional, defaults shown:
 
 **Wrong voice or speed**
 - Run `/speak voices` to see available voices
-- Voice names are platform-specific and must match exactly (e.g. "Grandma (English (US))", not just "Grandma")
+- Use `/speak set voice <name>` for fuzzy matching -- partial names work (e.g. "grandma")
 
 **Config looks wrong**
 - Check `~/.speak/config.json` is valid JSON
@@ -134,36 +134,13 @@ Stored at `~/.speak/config.json`. All fields optional, defaults shown:
 - If you have a TTS block in `~/.claude/hooks/scripts/hooks.py`, remove it to avoid double-firing
 
 **Hook not firing**
-- Verify the plugin is enabled in `~/.claude/settings.json` under `enabledPlugins`
+- Verify you launched with `claude --plugin-dir ~/speak` (local plugins are loaded at launch, not via settings.json)
 - Check `~/.speak/speak.log` for errors
 - Restart your Claude Code session after installing
 
-## File layout
+## Architecture
 
-```
-speak/
-  .claude-plugin/plugin.json    Plugin manifest
-  hooks/
-    hooks.json                  Hook definitions
-    stop.mjs                    Stop hook (speak on response)
-    session-start.mjs           Check TTS availability
-  skills/
-    speak/SKILL.md                /speak command
-  lib/
-    config.mjs                  Config load/save
-    text-cleaner.mjs            Markdown stripping
-    engine.mjs                  Engine registry
-    engines/native.mjs          OS-native TTS
-  bin/
-    speak.mjs                   CLI tool
-```
-
-Engine interface is pluggable via lib/engine.mjs. If you're not satisfied with the system TTS, a different engine can be configured behind this same interface. Right now the plugin only requires `Node.js >= 18` and your platform's native TTS (say on macOS, espeak on Linux). Neural engines sound better, but neural engine performance varies with system hardware (CPU vs GPU) and the engine capabilities. And I already mentioned that I prefer a robot voice for my agent over a human one.
-
-## What it does
-
-Cross-platform text-to-speech plugin for Claude Code. Hear your agent's responses spoken aloud.
-
+Engine interface is pluggable via `lib/engine.mjs`. If you're not satisfied with the system TTS, a different engine can be configured behind this same interface. Right now the plugin only requires `Node.js >= 18` and your platform's native TTS (say on macOS, espeak on Linux). Neural engines sound better, but neural engine performance varies with system hardware (CPU vs GPU) and the engine capabilities. And I already mentioned that I prefer a robot voice for my agent over a human one.
 
 ## Legal
 
