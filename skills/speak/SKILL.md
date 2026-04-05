@@ -53,7 +53,12 @@ Read config and display all current settings as a table. If the config file does
 
 ### /speak set <key> <value>
 Read config, validate, update the specified key, write back as a table. Valid keys and validation:
-- **voice** -- non-empty string. Platform-specific (e.g. "Grandma" on macOS, "en" on Linux espeak).
+- **voice** -- fuzzy match against installed voices. Run:
+  `node bin/voices.mjs --json <value>`
+  Parse the JSON array:
+  - **1 result**: save its `name` to config. Confirm with name and locale.
+  - **2+ results**: show a numbered list (name + locale), ask user to pick.
+  - **0 results**: tell user no match, suggest `/speak voices <value>`.
 - **sentences** -- positive integer, max 10. How many sentences to speak from each response. Reject values over 10.
 - **speed** -- positive number between 0.1 and 3.0. Speech rate multiplier (1.0 = normal). Reject non-numbers or out-of-range.
 If validation fails, tell the user what went wrong and do not update the config.
@@ -67,22 +72,8 @@ Read config, set `cleanMode: "terse"`, write back. Confirm the change.
 Read config, set `cleanMode: "verbose"`, write back. Confirm the change.
 
 ### /speak voices [filter]
-List available voices for the current platform, optionally filtered:
-- macOS: run `say -v '?'` and pipe through grep if filter provided
-- Linux: run `espeak --voices` and pipe through grep if filter provided
-
-Format the output as an aligned text table inside a fenced code block with
-three columns: Voice, Locale, and Sample. Wrap the entire table in triple
-backticks so that terse mode does not speak the voice list. Example format:
-
-```
-Voice               Locale   Sample
-------------------  -------  ----------------------------------
-Albert              en_US    Hello! My name is Albert.
-Daniel              en_GB    Hello! My name is Daniel.
-```
-
-Filter is case-insensitive and matches any part of the voice name or locale.
+Run: `node bin/voices.mjs <filter if provided>`
+Display the output directly -- it is pre-formatted. Do not reformat.
 
 ### /speak help
 Display the commands list from the Commands section above.
