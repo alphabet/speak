@@ -1,7 +1,7 @@
 ---
 name: speak
 description: Control text-to-speech for Claude Code responses. Turn on/off, adjust voice, speed, sentence count, and text cleaning.
-argument-hint: "[on|off|status|config <key> <value>|voices|help]"
+argument-hint: "[on|off|status|terse|verbose|set <key> <value>|voices [filter]|help]"
 allowed-tools: [Read, Write, Bash]
 user_invocable: true
 ---
@@ -12,18 +12,18 @@ Control text-to-speech for Claude Code responses.
 
 ## Commands
 
-```
-/speak on                                Enable TTS
-/speak off                               Disable TTS
-/speak status                            Show current settings
-/speak config voice <name>               Set voice (e.g. "Grandma", "Grandpa")
-/speak config sentences <n>              Sentences to speak per response
-/speak config speed <n>                  Rate multiplier (1.0 = normal)
-/speak config clean terse                Strip markdown before speaking
-/speak config clean verbose              Speak raw text as-is
-/speak voices                            List available voices for this platform
-/speak help                              Show this help
-```
+| Plugin  | Command | Value     | Parameter       | Description                          |
+|---------|---------|-----------|-----------------|--------------------------------------|
+| /speak  | on      |           |                 | Enable TTS                           |
+| /speak  | off     |           |                 | Disable TTS                          |
+| /speak  | status  |           |                 | Show current settings                |
+| /speak  | set     | voice     | `<name>`        | Platform-specific voice              |
+| /speak  | set     | sentences | `<n>` (1--10)   | Sentences to speak per response      |
+| /speak  | set     | speed     | `<n>` (0.1--3.0)| Rate multiplier (1.0 = normal)       |
+| /speak  | terse   |           |                 | Strip markdown before speaking       |
+| /speak  | verbose |           |                 | Speak raw text as-is                 |
+| /speak  | voices  |           | `[filter]`      | List available voices                |
+| /speak  | help    |           |                 | Show this help                       |
 
 ## Quick silence
 
@@ -40,36 +40,55 @@ Read config, set `enabled: true`, write back. Confirm to user with current setti
 Read config, set `enabled: false`, write back. Confirm: "TTS disabled."
 
 ### /speak status
-Read config and display all current settings. If the config file does not exist, show defaults:
-- enabled: true
-- engine: native
-- voice: (platform default)
-- speed: 1.0
-- sentences: 1
-- cleanMode: terse
+Read config and display all current settings as a table. If the config file does not exist, show defaults:
 
-### /speak config <key> <value>
-Read config, validate, update the specified key, write back. Valid keys and validation:
+| Setting   | Value              |
+|-----------|--------------------|
+| enabled   | true               |
+| engine    | native             |
+| voice     | (platform default) |
+| speed     | 1.0                |
+| sentences | 1                  |
+| cleanMode | terse              |
+
+### /speak set <key> <value>
+Read config, validate, update the specified key, write back as a table. Valid keys and validation:
 - **voice** -- non-empty string. Platform-specific (e.g. "Grandma" on macOS, "en" on Linux espeak).
 - **sentences** -- positive integer, max 10. How many sentences to speak from each response. Reject values over 10.
 - **speed** -- positive number between 0.1 and 3.0. Speech rate multiplier (1.0 = normal). Reject non-numbers or out-of-range.
-- **clean** -- must be "terse" or "verbose". Reject other values.
-
 If validation fails, tell the user what went wrong and do not update the config.
 
 After any successful config change, confirm the new value to the user.
 
-### /speak voices
-List available voices for the current platform:
-- macOS: run `say -v '?'`
-- Linux: run `espeak --voices`
-Display the output to the user.
+### /speak terse
+Read config, set `cleanMode: "terse"`, write back. Confirm the change.
+
+### /speak verbose
+Read config, set `cleanMode: "verbose"`, write back. Confirm the change.
+
+### /speak voices [filter]
+List available voices for the current platform, optionally filtered:
+- macOS: run `say -v '?'` and pipe through grep if filter provided
+- Linux: run `espeak --voices` and pipe through grep if filter provided
+
+Format the output as an aligned text table inside a fenced code block with
+three columns: Voice, Locale, and Sample. Wrap the entire table in triple
+backticks so that terse mode does not speak the voice list. Example format:
+
+```
+Voice               Locale   Sample
+------------------  -------  ----------------------------------
+Albert              en_US    Hello! My name is Albert.
+Daniel              en_GB    Hello! My name is Daniel.
+```
+
+Filter is case-insensitive and matches any part of the voice name or locale.
 
 ### /speak help
 Display the commands list from the Commands section above.
 
 ## Notes
 
-- After any change (on, off, config), always confirm the result to the user with the current state
+- After any change (on, off, set), always confirm the result to the user with the current state
 - Changes take effect on the next Claude response (Stop hook reads config each time)
 - The Stop hook runs asynchronously and never blocks Claude

@@ -1,69 +1,89 @@
 # speak
 
-Cross-platform text-to-speech plugin for Claude Code. Hear your agent's responses spoken aloud.
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-## What it does
+Deep in a flow state, locked onto that thing. The rest of the world has stopped existing.
 
-When Claude finishes a response, the Stop hook extracts the text, strips markdown noise, and speaks it using your platform's native TTS engine.
+## Why 
+My way to delegate peripheral attention to Claude Code is with this simple text to speech (TTS) plugin => https://github.com/alphabet/speak
 
-<video src="https://github.com/user-attachments/assets/60b6e10d-fc51-4b86-a104-66dd66a62a7a" controls
+## Demo
+After a week of playing with it, my favorite voice is the nerdy WALL-E / Stephen Hawking voice. In OSX, it’s called the "Grandma" voice.
+
+<video src="https://github.com/user-attachments/assets/9bddb1ce-05b1-4d77-b066-1e2b33971d64" controls
   width="auto"></video>
 
+## How
+It uses OS native speech. Native mainly for simplicity. Platform abstraction was part of my design. The native engines, `say` on MacOS, and `espeak` in Linux, are both easily swapped out via the `lib/engine.mjs` interface. Native has low latency. Native never blocks the agent. This should work for windows too, though it hasn't been tested.
+
+
+## Install
+
+1. Clone this repository, i.e., `gh repo clone alphabet/speak ~/speak`
+2. Start Claude Code with `claude --plugin-dir ~/speak`
+
+If you want the same voice I use, on MacOS it's `/speak set voice "Grandma (English (US))"`
+
+```
+Current TTS settings:
+> /speak status
+  ┌───────────┬─────────┐
+  │  Setting  │ Value   │
+  ├───────────┼─────────┤
+  │ enabled   │ false   │
+  ├───────────┼─────────┤
+  │ engine    │ native  │
+  ├───────────┼─────────┤
+  │ voice     │ Grandma │
+  ├───────────┼─────────┤
+  │ speed     │ 1.0     │
+  ├───────────┼─────────┤
+  │ sentences │ 3       │
+  ├───────────┼─────────┤
+  │ cleanMode │ terse   │
+  └───────────┴─────────┘
+```
 
 ## Compatibility
 
-Works with any Claude Code surface that supports hooks and plugins:
+Works with any Claude Code tool that supports hooks and plugins:
 
 - CLI (`claude`)
 - Desktop app (Mac/Windows)
 - Web app (claude.ai/code)
 - IDE extensions (VS Code, JetBrains)
 
-Does **not** work with Claude Desktop (the chat app), which has no hook or plugin system.
+Does **not** work with the Claude chat app. The chat app has no hook or plugin system.
 
-## Install
-
-1. Clone this repo somewhere on your machine
-2. Launch Claude Code with the plugin:
-   ```bash
-   claude --plugin-dir /path/to/speak
-   ```
-
-If you have a TTS block in `~/.claude/hooks/scripts/hooks.py`, remove it to avoid double-firing.
 
 ## Usage
 
 ### /speak
 
-```
-/speak on                                Enable TTS
-/speak off                               Disable TTS
-/speak status                            Show current settings
-/speak config voice <name>               Set voice (e.g. "Grandma", "Grandpa")
-/speak config sentences <n>              Sentences to speak (1-10)
-/speak config speed <n>                  Rate multiplier (0.1-3.0)
-/speak config clean terse                Strip markdown before speaking
-/speak config clean verbose              Speak raw text as-is
-/speak voices                            List available voices
-/speak help                              Show all commands
-```
+| Plugin  | Command | Value     | Parameter       | Description                          |
+|---------|---------|-----------|-----------------|--------------------------------------|
+| /speak  | on      |           |                 | Enable TTS                           |
+| /speak  | off     |           |                 | Disable TTS                          |
+| /speak  | status  |           |                 | Show current settings                |
+| /speak  | set     | voice     | `<name>`        | Platform-specific voice              |
+| /speak  | set     | sentences | `<n>` (1--10)   | Sentences to speak per response      |
+| /speak  | set     | speed     | `<n>` (0.1--3.0)| Rate multiplier (1.0 = normal)       |
+| /speak  | terse   |           |                 | Strip markdown before speaking       |
+| /speak  | verbose |           |                 | Speak raw text as-is                 |
+| /speak  | voices  |           | `[filter]`      | List available voices                |
+| /speak  | help    |           |                 | Show this help                       |
 
-### Quick silence
+### Kill switch and volume
 
-To stop speech mid-sentence, you have to use your system volume key (mute). Hardware mute is the only thing fast enough.
+To stop speech mid-sentence, hardware mute is the only thing that works. Use your system volume keys to adjust volume or mute.
 
-### CLI
-
-```bash
-node bin/speak.mjs "Hello world"
-```
-
-## How it works
+## Event flow
 
 - **Stop hook** fires after each Claude response
-- Text is cleaned (markdown/code stripped) and truncated to N sentences
-- Native TTS engine speaks the text asynchronously (never blocks Claude)
-- If a previous response is still speaking, it gets cut off (one voice at a time)
+- Text is cleaned (markdown/code stripped) via via `/speak set terse`
+- Text is truncated to N sentences via `/speak set sentences N`
+- Native TTS engine speaks the text
+- If a previous response is still speaking, it gets cut off. Only one voice at a time.
 
 ## Platform support
 
@@ -138,7 +158,12 @@ speak/
     speak.mjs                   CLI tool
 ```
 
-Engine interface is pluggable via lib/engine.mjs. If you're not satisfied with the system TTS, a different engine can be configured behind this same interface. Right now the plugin only requires `Node.js >= 18` and your platform's native TTS (say on macOS, espeak on Linux). Neural engines sound better, but neural engine performance varies with system hardware (CPU vs GPU) and the engine capabilities.
+Engine interface is pluggable via lib/engine.mjs. If you're not satisfied with the system TTS, a different engine can be configured behind this same interface. Right now the plugin only requires `Node.js >= 18` and your platform's native TTS (say on macOS, espeak on Linux). Neural engines sound better, but neural engine performance varies with system hardware (CPU vs GPU) and the engine capabilities. And I already mentioned that I prefer a robot voice for my agent over a human one.
+
+## What it does
+
+Cross-platform text-to-speech plugin for Claude Code. Hear your agent's responses spoken aloud.
+
 
 ## Legal
 

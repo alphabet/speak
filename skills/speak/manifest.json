@@ -1,0 +1,8 @@
+{
+    "name": "speak",
+    "description": "Text-to-speech for Claude Code responses",
+    "author": {
+      "name": "Guillermo Weinmann",
+      "email": "gui@alphabetware.com"
+    }
+  }
