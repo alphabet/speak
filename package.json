@@ -8,6 +8,9 @@
     "voices": "./bin/voices.mjs"
   },
   "license": "MIT",
+  "optionalDependencies": {
+    "kokoro-js": "^1.2.1"
+  },
   "engines": {
     "node": ">=18"
   }

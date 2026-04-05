@@ -17,7 +17,8 @@ Control text-to-speech for Claude Code responses.
 | /speak  | on      |           |                 | Enable TTS                           |
 | /speak  | off     |           |                 | Disable TTS                          |
 | /speak  | status  |           |                 | Show current settings                |
-| /speak  | set     | voice     | `<name>`        | Platform-specific voice              |
+| /speak  | set     | engine    | `native\|kokoro` | TTS engine (`native` or `kokoro`)    |
+| /speak  | set     | voice     | `<name>`        | Engine-specific voice                |
 | /speak  | set     | sentences | `<n>` (1--10)   | Sentences to speak per response      |
 | /speak  | set     | speed     | `<n>` (0.1--3.0)| Rate multiplier (1.0 = normal)       |
 | /speak  | terse   |           |                 | Strip markdown before speaking       |
@@ -53,6 +54,7 @@ Read config and display all current settings as a table. If the config file does
 
 ### /speak set <key> <value>
 Read config, validate, update the specified key, write back as a table. Valid keys and validation:
+- **engine** -- must be `native` or `kokoro`. Save to config, confirm with the engine name. Note: switching engines resets the voice to the engine's default (clear the `voice` field). Kokoro requires `kokoro-js` to be installed (`npm install kokoro-js` in the speak plugin directory).
 - **voice** -- fuzzy match against installed voices. Run:
   `node bin/voices.mjs --json <value>`
   Parse the JSON array:
