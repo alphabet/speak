@@ -8,8 +8,7 @@
 
 ## Demo
 
-<video src="https://github.com/user-attachments/assets/9bddb1ce-05b1-4d77-b066-1e2b33971d64" controls
-  width="auto"></video>
+<video src="https://github.com/user-attachments/assets/8411f978-0be6-4055-937b-071649f1ec43" controls width="auto"></video>
 
 ## Prerequisites
 
