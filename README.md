@@ -34,17 +34,14 @@ claude --plugin-dir ~/speak
 Type `/speak` to verify the plugin is loaded. Key commands:
 
 ```
-/speak on              # enable TTS
-/speak off             # disable TTS
-/speak set voice Ava   # change voice (fuzzy match)
-/speak set speed 1.5   # adjust speed (0.1-3.0)
-/speak set sentences 2 # sentences per response (1-10)
-/speak terse           # strip markdown before speaking
-/speak voices          # list available voices
-/speak set notificationHook off                             # silence idle/permission pings
-/speak set notificationHook on                              # re-enable (restores last behavior)
-/speak set notificationHook speak                           # TTS the notification (default)
-/speak set notificationHook /System/Library/Sounds/Blow.aiff # play a sound instead (macOS)
+/speak on                       # enable TTS
+/speak off                      # disable TTS
+/speak set voice Ava            # change voice (fuzzy match)
+/speak set speed 1.5            # adjust speed (0.1-3.0)
+/speak set sentences 2          # sentences per response (1-10)
+/speak terse                    # strip markdown before speaking
+/speak voices                   # list available voices
+/speak set notificationHook <mode> # on|off|speak/<path>
 ```
 
 Full command reference: [skills/speak/SKILL.md](skills/speak/SKILL.md)
@@ -61,7 +58,7 @@ Full command reference: [skills/speak/SKILL.md](skills/speak/SKILL.md)
 
 A Stop hook fires after each Claude response. The text is cleaned (markdown stripped), truncated to N sentences, and spoken by the platform's native TTS engine. If a previous response is still speaking, it gets cut off. No additional tokens are consumed -- this is pure client-side TTS.
 
-A second Notification hook fires on permission prompts and idle pings. It is configurable via `/speak set notificationHook`: turn it `off` for silence, leave it `on` to TTS the message, or point it at an absolute sound-file path (e.g. `/System/Library/Sounds/Blow.aiff`) to play a sound instead. Sound playback is macOS-only in the current pass.
+A Notification hook fires on permission prompts and idle pings, configurable via `/speak set notificationHook` (on/off/speak/sound-file path; off silences it, speak TTS's it, a path plays that sound on macOS).
 
 The engine interface is at `lib/engine.mjs` if you want to swap in a different runtime.
 
