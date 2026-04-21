@@ -20,6 +20,7 @@ Control text-to-speech for Claude Code responses.
 | /speak  | set     | voice     | `<name>`        | Platform-specific voice              |
 | /speak  | set     | sentences | `<n>` (1--10)   | Sentences to speak per response      |
 | /speak  | set     | speed     | `<n>` (0.1--3.0)| Rate multiplier (1.0 = normal)       |
+| /speak  | set     | notificationHook | `[on\|off\|speak\|<path>]` | Notification hook behavior (arg-less shows current) |
 | /speak  | terse   |           |                 | Strip markdown before speaking       |
 | /speak  | verbose |           |                 | Speak raw text as-is                 |
 | /speak  | voices  |           | `[filter]`      | List available voices                |
@@ -42,14 +43,16 @@ Read config, set `enabled: false`, write back. Confirm: "TTS disabled."
 ### /speak status
 Read config and display all current settings as a table. If the config file does not exist, show defaults:
 
-| Setting   | Value              |
-|-----------|--------------------|
-| enabled   | true               |
-| engine    | native             |
-| voice     | (platform default) |
-| speed     | 1.0                |
-| sentences | 1                  |
-| cleanMode | terse              |
+| Setting                 | Value              |
+|-------------------------|--------------------|
+| enabled                 | true               |
+| engine                  | native             |
+| voice                   | (platform default) |
+| speed                   | 1.0                |
+| sentences               | 1                  |
+| cleanMode               | terse              |
+| notificationHook        | speak              |
+| notificationHookEnabled | true               |
 
 ### /speak set <key> <value>
 Read config, validate, update the specified key, write back as a table. Valid keys and validation:
@@ -61,6 +64,12 @@ Read config, validate, update the specified key, write back as a table. Valid ke
   - **0 results**: tell user no match, suggest `/speak voices <value>`.
 - **sentences** -- positive integer, max 10. How many sentences to speak from each response. Reject values over 10.
 - **speed** -- positive number between 0.1 and 3.0. Speech rate multiplier (1.0 = normal). Reject non-numbers or out-of-range.
+- **notificationHook** -- controls what the Notification hook does when Claude Code emits a notification. Accepts any of:
+  - `on` -- enable the hook (set `notificationHookEnabled: true`). Behavior unchanged.
+  - `off` -- disable the hook (set `notificationHookEnabled: false`). Behavior preserved, so re-enabling restores it.
+  - `speak` -- TTS the notification title+message (set `notificationHook: "speak"` and `notificationHookEnabled: true`).
+  - `<absolute path>` -- play this sound file instead of speaking (set `notificationHook: <path>` and `notificationHookEnabled: true`). Path must be absolute and the file must exist. Good default on macOS: `/System/Library/Sounds/Blow.aiff`. Sound playback is macOS-only in this pass; on Linux/Windows a log line is written and nothing plays.
+  - *no arg* -- display current state (e.g. `notificationHook: /System/Library/Sounds/Blow.aiff (on)`). Do not write config.
 If validation fails, tell the user what went wrong and do not update the config.
 
 After any successful config change, confirm the new value to the user.
