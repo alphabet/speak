@@ -34,13 +34,13 @@ claude --plugin-dir ~/speak
 Type `/speak` to verify the plugin is loaded. Key commands:
 
 ```
-/speak on                       # enable TTS
-/speak off                      # disable TTS
-/speak set voice Ava            # change voice (fuzzy match)
-/speak set speed 1.5            # adjust speed (0.1-3.0)
-/speak set sentences 2          # sentences per response (1-10)
-/speak terse                    # strip markdown before speaking
-/speak voices                   # list available voices
+/speak on                          # enable TTS
+/speak off                         # disable TTS
+/speak set voice Ava               # change voice (fuzzy match)
+/speak set speed 1.5               # adjust speed (0.1-3.0)
+/speak set sentences 2             # sentences per response (1-10)
+/speak terse                       # strip markdown before speaking
+/speak voices                      # list available voices
 /speak set notificationHook <mode> # on|off|speak/<path>
 ```
 
