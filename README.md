@@ -34,13 +34,14 @@ claude --plugin-dir ~/speak
 Type `/speak` to verify the plugin is loaded. Key commands:
 
 ```
-/speak on              # enable TTS
-/speak off             # disable TTS
-/speak set voice Ava   # change voice (fuzzy match)
-/speak set speed 1.5   # adjust speed (0.1-3.0)
-/speak set sentences 2 # sentences per response (1-10)
-/speak terse           # strip markdown before speaking
-/speak voices          # list available voices
+/speak on                          # enable TTS
+/speak off                         # disable TTS
+/speak set voice Ava               # change voice (fuzzy match)
+/speak set speed 1.5               # adjust speed (0.1-3.0)
+/speak set sentences 2             # sentences per response (1-10)
+/speak terse                       # strip markdown before speaking
+/speak voices                      # list available voices
+/speak set notificationHook <mode> # on|off|speak/<path>
 ```
 
 Full command reference: [skills/speak/SKILL.md](skills/speak/SKILL.md)
@@ -56,6 +57,8 @@ Full command reference: [skills/speak/SKILL.md](skills/speak/SKILL.md)
 ## How it works
 
 A Stop hook fires after each Claude response. The text is cleaned (markdown stripped), truncated to N sentences, and spoken by the platform's native TTS engine. If a previous response is still speaking, it gets cut off. No additional tokens are consumed -- this is pure client-side TTS.
+
+A Notification hook fires on permission prompts and idle pings, configurable via `/speak set notificationHook` (on/off/speak/sound-file path; off silences it, speak TTS's it, a path plays that sound on macOS).
 
 The engine interface is at `lib/engine.mjs` if you want to swap in a different runtime.
 
