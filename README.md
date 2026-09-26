@@ -18,8 +18,8 @@
 ## Install
 
 ```bash
-claude plugin marketplace add https://alphabetware.com/marketplace.json
-claude plugin install speak
+claude plugin marketplace add alphabet/speak
+claude plugin install speak@alphabetware
 ```
 
 To install from source instead:
