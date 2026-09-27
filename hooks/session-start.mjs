@@ -3,8 +3,10 @@
 import { load } from '../lib/config.mjs';
 import { register, get } from '../lib/engine.mjs';
 import native from '../lib/engines/native.mjs';
+import kokoro from '../lib/engines/kokoro.mjs';
 
 register(native);
+register(kokoro);
 
 const config = await load();
 const engine = get(config.engine);

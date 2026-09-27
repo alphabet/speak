@@ -6,7 +6,7 @@
           {
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/stop.mjs\"",
-            "timeout": 5
+            "timeout": 30
           }
         ]
       }
@@ -17,7 +17,7 @@
           {
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/notification.mjs\"",
-            "timeout": 5000
+            "timeout": 30
           }
         ]
       }
@@ -28,7 +28,7 @@
           {
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/session-start.mjs\"",
-            "timeout": 5000
+            "timeout": 30
           }
         ]
       }
