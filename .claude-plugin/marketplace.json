@@ -1,0 +1,20 @@
+{
+  "name": "alphabetware",
+  "metadata": {
+    "description": "A collection of developer tools",
+    "version": "0.0.1"
+  },
+  "owner": {
+    "name": "Guillermo Weinmann"
+  },
+  "plugins": [
+    {
+      "name": "speak",
+      "description": "Text-To-Speech synthesizer for Claude Code",
+      "source": "./",
+      "license": "MIT",
+      "category": "tool",
+      "keywords": ["tts", "text-to-speech", "audio", "cross-platform"]
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 {
   "name": "speak",
   "version": "0.1.0",
-  "description": "Cross-platform TTS for Claude Code. Hear your agent's responses.",
+  "description": "Simple, cross-platform, and low-latency TTS. Hear your agent's responses.",
   "author": {
     "name": "Guillermo Weinmann"
   },

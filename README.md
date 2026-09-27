@@ -1,92 +1,53 @@
-# speak
+<p align="center">
+  <h1 align="center">speak</h1>
+</p>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-Deep in a flow state, locked onto that thing. The rest of the world has stopped existing.
-
-## Why 
-My way to delegate peripheral attention to Claude Code is with this simple text to speech (TTS) plugin => https://github.com/alphabet/speak
+<p align="center">
+  Text-to-speech plugin for Claude Code. Reads responses aloud using native TTS engines.
+</p>
 
 ## Demo
-After a week of playing with it, my favorite voice is the nerdy WALL-E / Stephen Hawking voice. In OSX, it’s called the "Grandma" voice.
+(??)
 
-<video src="https://github.com/user-attachments/assets/9bddb1ce-05b1-4d77-b066-1e2b33971d64" controls
-  width="auto"></video>
+<video src="https://github.com/user-attachments/assets/8411f978-0be6-4055-937b-071649f1ec43" controls width="auto"></video>
 
-## How
-It uses OS native speech by default. Native mainly for simplicity. Platform abstraction was part of my design. The native engines, `say` on MacOS, and `espeak` in Linux, are both easily swapped out via the `lib/engine.mjs` interface. Native has low latency. Native never blocks the agent. This should work for windows too, though it hasn't been tested.
+## Prerequisites
 
-There is also a **Kokoro** engine available -- a neural TTS that runs locally via ONNX. 54 voices across 8 languages. See [Kokoro setup](#kokoro-neural-tts) below.
-
+- **git** — Required to clone the plugin repository
+- **Node.js 18+** — Required to run plugin hooks
 
 ## Install
 
-1. Clone this repository, i.e., `gh repo clone alphabet/speak ~/speak`
-2. Start Claude Code with `claude --plugin-dir ~/speak`
-
-If you want the same voice I use, on MacOS it's `/speak set voice grandma` and pick English (US)
-
-```
-Current TTS settings:
-> /speak status
-  ┌───────────┬─────────┐
-  │  Setting  │ Value   │
-  ├───────────┼─────────┤
-  │ enabled   │ false   │
-  ├───────────┼─────────┤
-  │ engine    │ native  │
-  ├───────────┼─────────┤
-  │ voice     │ Grandma │
-  ├───────────┼─────────┤
-  │ speed     │ 1.0     │
-  ├───────────┼─────────┤
-  │ sentences │ 3       │
-  ├───────────┼─────────┤
-  │ cleanMode │ terse   │
-  └───────────┴─────────┘
+```bash
+claude plugin marketplace add alphabet/speak
+claude plugin install speak@alphabetware
 ```
 
-## Compatibility
+To install from source instead:
 
-Works with any Claude Code tool that supports hooks and plugins:
-
-- CLI (`claude`)
-- Desktop app (Mac/Windows)
-- Web app (claude.ai/code)
-- IDE extensions (VS Code, JetBrains)
-
-Does **not** work with the Claude chat app. The chat app has no hook or plugin system.
-
+```bash
+gh repo clone alphabet/speak ~/speak
+claude --plugin-dir ~/speak
+```
+(??)
 
 ## Usage
 
-### /speak
+Type `/speak` to verify the plugin is loaded. Key commands:
 
-| Plugin  | Command | Value     | Parameter       | Description                          |
-|---------|---------|-----------|-----------------|--------------------------------------|
-| /speak  | on      |           |                 | Enable TTS                           |
-| /speak  | off     |           |                 | Disable TTS                          |
-| /speak  | status  |           |                 | Show current settings                |
-| /speak  | set     | engine    | `native\|kokoro` | TTS engine                           |
-| /speak  | set     | voice     | `<name>`        | Engine-specific voice                |
-| /speak  | set     | sentences | `<n>` (1--10)   | Sentences to speak per response      |
-| /speak  | set     | speed     | `<n>` (0.1--3.0)| Rate multiplier (1.0 = normal)       |
-| /speak  | terse   |           |                 | Strip markdown before speaking       |
-| /speak  | verbose |           |                 | Speak raw text as-is                 |
-| /speak  | voices  |           | `[filter]`      | List available voices                |
-| /speak  | help    |           |                 | Show this help                       |
+```
+/speak on                          # enable TTS
+/speak off                         # disable TTS
+/speak set voice Ava               # change voice (fuzzy match)
+/speak  set engine `native|kokoro` # TTS engine
+/speak set speed 1.5               # adjust speed (0.1-3.0)
+/speak set sentences 2             # sentences per response (1-10)
+/speak terse                       # strip markdown before speaking
+/speak voices                      # list available voices
+/speak set notificationHook <mode> # on|off|speak/<path>
+```
 
-### Kill switch and volume
-
-To stop speech mid-sentence, hardware mute is the only thing that works. Use your system volume keys to adjust volume or mute.
-
-## Event flow
-
-- **Stop hook** fires after each Claude response
-- Text is cleaned (markdown/code stripped) via `/speak terse`
-- Text is truncated to N sentences via `/speak set sentences N`
-- Native TTS engine speaks the text
-- If a previous response is still speaking, it gets cut off. Only one voice at a time.
+Full command reference: [skills/speak/SKILL.md](skills/speak/SKILL.md)
 
 ## Platform support
 
@@ -97,50 +58,26 @@ To stop speech mid-sentence, hardware mute is the only thing that works. Use you
 | Windows  | SAPI (native)  | Built-in via PowerShell + System.Speech |
 | Any      | kokoro         | `npm install kokoro-js` in the speak plugin directory |
 
-## Config
+## How it works
 
-Stored at `~/.speak/config.json`. All fields optional, defaults shown:
+A Stop hook fires after each Claude response. The text is cleaned (markdown stripped), truncated to N sentences, and spoken by the platform's native TTS engine. If a previous response is still speaking, it gets cut off. No additional tokens are consumed -- this is pure client-side TTS.
 
-```json
-{
-  "enabled": true,
-  "engine": "native",
-  "voice": null,
-  "speed": 1.0,
-  "sentences": 1,
-  "cleanMode": "terse"
-}
-```
+A Notification hook fires on permission prompts and idle pings, configurable via `/speak set notificationHook` (on/off/speak/sound-file path; off silences it, speak TTS's it, a path plays that sound on macOS).
+
+The engine interface is at `lib/engine.mjs` if you want to swap in a different runtime.
 
 ## Troubleshooting
 
-**No sound on macOS**
-- Check system volume is not muted
-- Run `say "test"` in Terminal to verify TTS works outside the plugin
-- Check `~/.speak/config.json` has `"enabled": true`
+**No sound on macOS** -- Check system volume. Run `say "test"` in Terminal. Check `~/.speak/config.json` has `"enabled": true`.
 
-**No sound on Linux**
-- Install espeak: `apt install espeak`
-- Run `espeak "test"` to verify it works
-- The SessionStart hook warns if espeak is missing; check your session start output
+**No sound on Linux** -- Install espeak: `apt install espeak`. Run `espeak "test"` to verify.
 
-**Wrong voice or speed**
-- Run `/speak voices` to see available voices
-- Use `/speak set voice <name>` for fuzzy matching -- partial names work (e.g. "grandma")
+**Adjust voice or speed** -- `/speak voices` to list voices, `/speak set voice <name>` for fuzzy match, `/speak set speed <n>` for rate.
 
-**Config looks wrong**
-- Check `~/.speak/config.json` is valid JSON
-- If corrupted, delete it -- defaults will be used
-- Parse errors are logged to `~/.speak/speak.log`
+**Config issues** -- Delete `~/.speak/config.json` to reset to defaults. Parse errors are logged to `~/.speak/speak.log`.
 
-**Two voices talking at once**
-- The plugin kills any running speech before starting new speech -- this shouldn't happen
-- If you have a TTS block in `~/.claude/hooks/scripts/hooks.py`, remove it to avoid double-firing
+**Hook not firing** -- Restart your Claude Code session after installing. Check `~/.speak/speak.log` for errors.
 
-**Hook not firing**
-- Verify you launched with `claude --plugin-dir ~/speak` (local plugins are loaded at launch, not via settings.json)
-- Check `~/.speak/speak.log` for errors
-- Restart your Claude Code session after installing
 
 ## Architecture
 
@@ -189,4 +126,5 @@ The first time Kokoro speaks, it downloads the quantized model (~86 MB) from Hug
 
 ## License
 
-MIT
+This plugin is MIT licensed. It calls platform TTS engines on the user's machine -- it does not redistribute any voice assets. macOS system voices are subject to Apple's macOS Software License Agreement. espeak-ng is GPLv3; this plugin calls the system binary without bundling it.
+
