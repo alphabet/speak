@@ -3,9 +3,10 @@
 import { load } from '../lib/config.mjs';
 import { register, get } from '../lib/engine.mjs';
 import native from '../lib/engines/native.mjs';
-
+import kokoro from '../lib/engines/kokoro.mjs';
 
 register(native);
+register(kokoro);
 
 const args = process.argv.slice(2);
 const jsonMode = args[0] === '--json';

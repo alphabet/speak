@@ -59,7 +59,7 @@ Read config and display all current settings as a table. If the config file does
 Read config, validate, update the specified key, write back as a table. Valid keys and validation:
 - **engine** -- must be `native` or `kokoro`. Save to config, confirm with the engine name. Note: switching engines resets the voice to the engine's default (clear the `voice` field). Kokoro requires `kokoro-js` to be installed (`npm install kokoro-js` in the speak plugin directory).
 - **voice** -- fuzzy match against installed voices. Run:
-  `node bin/voices.mjs --json <value>`
+  `node ../../scripts/voices.mjs --json <value>`
   Parse the JSON array:
   - **1 result**: save its `name` to config. Confirm with name and locale.
   - **2+ results**: show a numbered list (name + locale), ask user to pick.
@@ -83,7 +83,7 @@ Read config, set `cleanMode: "terse"`, write back. Confirm the change.
 Read config, set `cleanMode: "verbose"`, write back. Confirm the change.
 
 ### /speak voices [filter]
-Run: `../../bin/voices.mjs <filter if provided>`
+Run: `../../scripts/voices.mjs <filter if provided>`
 Display the output directly -- it is pre-formatted. Do not reformat.
 
 ### /speak help

@@ -1,6 +1,6 @@
 {
   "name": "speak",
-  "version": "0.1.01",
+  "version": "0.1.2",
   "description": "Simple, cross-platform, and low-latency TTS. Hear your agent's responses.",
   "author": {
     "name": "Guillermo Weinmann"
